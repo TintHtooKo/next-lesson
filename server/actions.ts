@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/server"
-import { todos } from "./schema"
+import { posts, todos } from "./schema"
 import { revalidatePath } from "next/cache"
 import { eq } from "drizzle-orm"
 import { error } from "console"
@@ -38,7 +38,6 @@ export const deleteData = async(formData: FormData) => {
 }
 
 export const updateData = async(formData : FormData)=>{
-    console.log(formData)
     const todoTitle = formData.get('title')?.toString()
     const todoId = Number(formData.get('id'))
     if(!todoTitle){
@@ -49,4 +48,56 @@ export const updateData = async(formData : FormData)=>{
     revalidatePath("/");
     redirect("/")
 
+}
+
+
+// For Blog
+export const getPosts = async() => {
+    const posts = await db.query.posts.findMany()
+    if(!posts){
+        return {error : 'No posts found'}
+    }
+    return {success : posts}
+}
+
+export const createPost = async(formData : FormData) => {
+    const title = formData.get('title')?.toString()
+    const desc = formData.get('desc')?.toString()
+    if(!title || !desc){
+        return {error : 'Title or desc is required'}
+    }
+
+    await db.insert(posts).values({title , desc})
+    revalidatePath("/")
+    redirect("/")
+}
+
+export const getPost = async(id : number) => {
+    const post = await db.query.posts.findFirst({where : eq(posts.id, id)})
+    if(!post){
+        redirect("/")
+    }
+    return {success : post}
+}
+
+export const deletePost = async(formData:FormData) => {
+    const id = Number(formData.get('id'))
+    if(!id){
+        return {error : 'Id is required'}
+    }
+    await db.delete(posts).where(eq(posts.id, id))
+    revalidatePath("/")
+    return {success : 'Post deleted successfully'}
+}
+
+export const updatePost = async(formData : FormData) => {
+    const id = Number(formData.get('id'))
+    const title = formData.get('title')?.toString()
+    const desc = formData.get('desc')?.toString()
+    if(!title || !desc){
+        return {error : 'Title or desc is required'}
+    }
+    await db.update(posts).set({title, desc}).where(eq(posts.id, id))
+    revalidatePath("/")
+    redirect("/")
 }

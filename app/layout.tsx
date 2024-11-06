@@ -32,13 +32,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <nav className="flex gap-4">
-      <Link href={"/"}>Home</Link>
-      <Link href={"/about"}>About</Link>
-      <Link href={"/setting"}>Setting</Link>
+      <nav className="flex items-center justify-between p-3 bg-blue-600 text-white">
+        <Link href={'/'}><h2 className=" text-3xl font-bold">BLOG</h2></Link>
+          <Link href={"/create"} className=" p-2 text-blue-600 bg-white rounded-md font-medium text-sm">Create New Blog</Link>    
       </nav>
         {children}
-        {isAdmin && dashboard}
       </body>
     </html>
   );

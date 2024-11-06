@@ -1,5 +1,6 @@
+import BlogCard from "@/component/BlogCard";
 import CustomBottom from "@/component/CustomBottom";
-import { createData, deleteData, readData } from "@/server/actions";
+import {  getPosts, readData } from "@/server/actions";
 import Link from "next/link";
 
 
@@ -19,35 +20,25 @@ import Link from "next/link";
 export default async function Home() {
   // database twat write htr tae action mhr error and success htoke htr loh
   // ta khr tae destructure lote lite tr
-  const {error,success} = await readData();
+  const {error,success} = await getPosts();
   if(error){
     throw new Error(error)
   }
   return (
-    <main>
-      <h1 className="text-xl font-bold">Todos</h1>
+    <main className=" mt-10 p-4">
+      <h1 className="title-text">Recent Blog List</h1>
       {
-        success?.map(todo => (
-          <div className=""  key={todo.id}>
-            <p>{todo.title}</p>
-            <form action={deleteData}>
-              <input type="hidden" name="id" value={todo.id} readOnly/>
-              <button type="submit" 
-              className=" border border-1 p-2 bg-red-500 text-white"   
-              >Delete</button>
-            </form>
-            <Link href={`/update/${todo.id}`} className=" border border-1 p-2 bg-green-600">Edit</Link>
-            <hr className=" my-2"/>
-          </div>
-          
-        ))
+        success?.length == 0 ? (
+          <h1 className="title-text">No Blog Found</h1>
+        ) : (
+          success?.map(post => (
+            <BlogCard id={post.id} title={post.title} desc={post.desc} key={post.id}/>        
+          ))
+        )
       }
       <hr />
       <div className="">
-        <form action={createData} className=" mt-2">
-          <input className="border border-1" type="text" name="title" />
-         <CustomBottom label="Create Todo"/>
-        </form>
+        
       </div>
       
     </main>

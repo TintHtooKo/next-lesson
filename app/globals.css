@@ -19,3 +19,7 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.title-text{
+  @apply text-xl font-bold text-blue-600
+}
